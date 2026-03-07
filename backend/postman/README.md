@@ -125,25 +125,113 @@ Try different endpoints to see various features:
 2. Change the task ID in the URL
 3. Click **Send**
 
-### Step 6: Admin Features (Optional)
+### Step 6: Admin Features Testing
 
-**Note:** Admin features require ADMIN role. You need to manually update the database to set a user's role to ADMIN:
+**Important:** There is NO direct API to register as admin (this is by design for security). You must manually promote a user to admin in the database.
 
+#### Complete Admin Testing Flow:
+
+##### 6.1 Register an Admin User
+1. Go to **Authentication > Register User**
+2. Use special email/credentials for admin:
+```json
+{
+  "name": "Admin User",
+  "email": "admin@example.com",
+  "password": "Admin@123"
+}
+```
+3. Click **Send** - User is created with default **USER** role
+
+##### 6.2 Promote User to Admin Role
+**Connect to your MySQL database and run this SQL:**
 ```sql
-UPDATE users SET role = 'ADMIN' WHERE email = 'john@example.com';
+-- Option 1: Using MySQL Workbench or Command Line
+USE task_management;
+UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
+
+-- Verify the change
+SELECT id, name, email, role FROM users WHERE email = 'admin@example.com';
 ```
 
-After setting ADMIN role, login again to get a new token with ADMIN privileges.
+**Using MySQL Command Line:**
+```bash
+# Connect to MySQL
+mysql -u your_username -p
 
-#### Admin Endpoints:
-- **Get All Tasks (Admin Only)** - View all tasks from all users
-- **Get All Tasks (Filter by Status)** - Filter all users' tasks by status
-- **Get All Tasks (Filter by Priority)** - Filter all users' tasks by priority
-- **Get All Tasks (With Pagination & Sorting)** - Full control over all tasks
+# Run the commands
+USE task_management;
+UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
+SELECT id, name, email, role FROM users WHERE email = 'admin@example.com';
+exit;
+```
 
-**Expected Behavior:**
-- ✅ ADMIN role: Returns all tasks from all users
-- ❌ USER role: Returns `403 Forbidden` error
+##### 6.3 Login as Admin to Get Admin Token
+1. Go to **Authentication > Login**
+2. Use admin credentials:
+```json
+{
+  "email": "admin@example.com",
+  "password": "Admin@123"
+}
+```
+3. Click **Send** - Token with **ADMIN privileges** is auto-saved
+4. **Important:** Old token (from registration) won't work for admin endpoints - you MUST login again after role change
+
+##### 6.4 Test Admin Endpoints
+Now test these admin-only endpoints:
+
+**A. Get All Tasks (Admin Only)**
+- Go to **Admin > Get All Tasks (Admin Only)**
+- Click **Send**
+- ✅ Should see tasks from ALL users in the system
+
+**B. Get All Tasks (Filter by Status)**
+- Try filtering: `?status=TODO`
+- Should see all TODO tasks from all users
+
+**C. Get All Tasks (Filter by Priority)**
+- Try filtering: `?priority=HIGH`
+- Should see all HIGH priority tasks from all users
+
+**D. Get All Tasks (With Pagination & Sorting)**
+- Try: `?page=0&size=10&sortBy=createdAt&sortDir=DESC`
+- Should see paginated results from all users
+
+##### 6.5 Verify Role-Based Access Control
+**Test USER role is blocked:**
+1. Register/login as a regular user (e.g., `user@example.com`)
+2. Try to access **Admin > Get All Tasks (Admin Only)**
+3. ❌ Should receive `403 Forbidden` error:
+```json
+{
+  "timestamp": "2026-03-07T10:30:00",
+  "status": 403,
+  "error": "Forbidden",
+  "message": "Access Denied",
+  "path": "/api/admin/tasks"
+}
+```
+
+**Test ADMIN role has access:**
+1. Switch to admin token (login as admin@example.com)
+2. Try same endpoint
+3. ✅ Should see all tasks successfully
+
+#### Admin Testing Summary:
+
+| Role | Endpoint | Expected Result |
+|------|----------|----------------|
+| USER | `/api/tasks` | ✅ Only their own tasks |
+| USER | `/api/admin/tasks` | ❌ 403 Forbidden |
+| ADMIN | `/api/tasks` | ✅ Only their own tasks |
+| ADMIN | `/api/admin/tasks` | ✅ All users' tasks |
+
+**Key Points:**
+- Admin users can create/update/delete only their own tasks via `/api/tasks`
+- Admin users can VIEW all users' tasks via `/api/admin/tasks` (read-only)
+- Admin role must be set manually in database (no API endpoint for security)
+- Must login again after role change to get new token with correct permissions
 
 ## 🔧 Environment Variables
 
@@ -260,21 +348,67 @@ The environment file contains these variables:
 4. Try to get non-existent task → 404 Not Found
 5. Try admin endpoint as USER → 403 Forbidden
 
-### Scenario 4: Security Testing
-1. Register as User A
-2. Create task as User A (note the task ID)
-3. Logout and register as User B
-4. Try to access User A's task → Should fail or not show
-5. Try to update User A's task → Should fail
-6. Try to delete User A's task → Should fail
+### Scenario 4: Security Testing (Task Ownership)
+1. Register as User A (`usera@example.com`)
+2. Create 2 tasks as User A (note the task IDs)
+3. Register as User B (`userb@example.com`)
+4. Create 2 tasks as User B
+5. Try to access User A's task by ID → Should get 403 or 404
+6. Try to update User A's task → Should fail with 403
+7. Try to delete User A's task → Should fail with 403
+8. Get all tasks as User B → Should only see User B's tasks
 
-### Scenario 5: Admin Testing
-1. Set one user as ADMIN in database
-2. Login as ADMIN
-3. Create tasks as ADMIN
-4. Register another user and create tasks
-5. Use admin endpoint to view all tasks
-6. Verify both users' tasks are visible
+### Scenario 5: Admin Testing (Complete Flow)
+
+**Phase 1 - Setup Users & Data:**
+1. Register User A (`usera@example.com`, password: `UserA@123`)
+2. Login as User A and create 3 tasks:
+   - Task 1: `TODO`, `HIGH` priority, due tomorrow
+   - Task 2: `IN_PROGRESS`, `MEDIUM` priority, due next week
+   - Task 3: `DONE`, `LOW` priority, past due date
+
+3. Register User B (`userb@example.com`, password: `UserB@123`)
+4. Login as User B and create 2 tasks:
+   - Task 4: `TODO`, `LOW` priority, due today
+   - Task 5: `TODO`, `HIGH` priority, due tomorrow
+
+5. Register Admin User (`admin@example.com`, password: `Admin@123`)
+
+**Phase 2 - Promote to Admin:**
+6. Open MySQL and run:
+```sql
+USE task_management;
+UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
+SELECT id, name, email, role FROM users;
+```
+
+**Phase 3 - Test Admin Access:**
+7. Login as admin@example.com (get new token with ADMIN role)
+8. Try **Admin > Get All Tasks** → ✅ Should see all 5 tasks (from both users)
+9. Try filter `?status=TODO` → ✅ Should see 3 TODO tasks (1 from User A, 2 from User B)
+10. Try filter `?priority=HIGH` → ✅ Should see 2 HIGH priority tasks
+11. Try pagination `?page=0&size=2` → ✅ Should see first 2 tasks only
+
+**Phase 4 - Verify Role Access Control:**
+12. Login as User A (regular user)
+13. Try **Admin > Get All Tasks** → ❌ Should get `403 Forbidden`
+14. Try **Tasks > Get My Tasks** → ✅ Should see only User A's 3 tasks
+15. Login as Admin again
+16. Try **Tasks > Get My Tasks** → ✅ Should see only admin's own tasks (0 if admin didn't create any)
+17. Try **Admin > Get All Tasks** → ✅ Should see all tasks from all users
+
+**Phase 5 - Admin Can't Modify Others' Tasks:**
+18. As admin, try to update User A's task via `PUT /api/tasks/{userA_task_id}`
+19. ❌ Should fail with 403 - Admin can VIEW all tasks but can't modify them
+20. Admin endpoints are READ-ONLY for viewing/monitoring purposes
+
+**Expected Results Summary:**
+- ✅ Regular users see only their tasks
+- ✅ Regular users can't access admin endpoints (403)
+- ✅ Admin can view all tasks via admin endpoint
+- ✅ Admin can't modify other users' tasks (ownership still enforced)
+- ✅ Filtering, pagination work on admin endpoint
+- ✅ Token must be refreshed after role change
 
 ## 🐛 Troubleshooting
 
