@@ -5,6 +5,7 @@ import com.yasiru.task_manager_backend.dto.LoginRequest;
 import com.yasiru.task_manager_backend.dto.RegisterRequest;
 import com.yasiru.task_manager_backend.entity.User;
 import com.yasiru.task_manager_backend.enums.Role;
+import com.yasiru.task_manager_backend.exception.DuplicateResourceException;
 import com.yasiru.task_manager_backend.repository.UserRepository;
 import com.yasiru.task_manager_backend.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         // Check if email already exists
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new DuplicateResourceException("Email already registered");
         }
         
         // Create new user

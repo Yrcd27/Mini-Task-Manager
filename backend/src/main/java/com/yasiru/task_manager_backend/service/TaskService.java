@@ -6,6 +6,7 @@ import com.yasiru.task_manager_backend.entity.Task;
 import com.yasiru.task_manager_backend.entity.User;
 import com.yasiru.task_manager_backend.enums.TaskPriority;
 import com.yasiru.task_manager_backend.enums.TaskStatus;
+import com.yasiru.task_manager_backend.exception.ResourceNotFoundException;
 import com.yasiru.task_manager_backend.repository.TaskRepository;
 import com.yasiru.task_manager_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +96,7 @@ public class TaskService {
         User user = getCurrentUser();
         
         Task task = taskRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         
         // Check ownership
         if (!task.getUser().getId().equals(user.getId())) {
@@ -110,7 +111,7 @@ public class TaskService {
         User user = getCurrentUser();
         
         Task task = taskRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         
         // Check ownership
         if (!task.getUser().getId().equals(user.getId())) {
@@ -133,7 +134,7 @@ public class TaskService {
         User user = getCurrentUser();
         
         Task task = taskRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         
         // Check ownership
         if (!task.getUser().getId().equals(user.getId())) {
