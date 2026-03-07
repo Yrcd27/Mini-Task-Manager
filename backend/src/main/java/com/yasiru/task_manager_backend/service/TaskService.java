@@ -142,4 +142,30 @@ public class TaskService {
         
         taskRepository.delete(task);
     }
+    
+    // ============ ADMIN ONLY METHODS ============
+    
+    // Get all tasks (admin only)
+    public Page<TaskResponse> getAllTasks(Pageable pageable) {
+        Page<Task> tasks = taskRepository.findAll(pageable);
+        return tasks.map(this::toTaskResponse);
+    }
+    
+    // Get tasks by status (admin only)
+    public Page<TaskResponse> getAllTasksByStatus(TaskStatus status, Pageable pageable) {
+        Page<Task> tasks = taskRepository.findByStatus(status, pageable);
+        return tasks.map(this::toTaskResponse);
+    }
+    
+    // Get tasks by priority (admin only)
+    public Page<TaskResponse> getAllTasksByPriority(TaskPriority priority, Pageable pageable) {
+        Page<Task> tasks = taskRepository.findByPriority(priority, pageable);
+        return tasks.map(this::toTaskResponse);
+    }
+    
+    // Get tasks by status and priority (admin only)
+    public Page<TaskResponse> getAllTasksByStatusAndPriority(TaskStatus status, TaskPriority priority, Pageable pageable) {
+        Page<Task> tasks = taskRepository.findByStatusAndPriority(status, priority, pageable);
+        return tasks.map(this::toTaskResponse);
+    }
 }
