@@ -28,8 +28,10 @@ export default function AdminPage() {
 
   const [status, setStatus] = useState<TaskStatus | "">("");
   const [priority, setPriority] = useState<TaskPriority | "">("");
-  const [sortBy, setSortBy] = useState<string>("dueDate");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [sortBy, setSortBy] = useState<"createdAt" | "dueDate" | "priority">(
+    "dueDate"
+  );
+  const [sortDir, setSortDir] = useState<"ASC" | "DESC">("ASC");
 
   useEffect(() => {
     if (user?.role !== "ADMIN") {
