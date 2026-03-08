@@ -18,9 +18,9 @@ export default function Button({
     "rounded-lg px-4 py-2 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variantStyles = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
+    primary: "bg-emerald-600 text-white hover:bg-emerald-700",
     danger: "bg-red-500 text-white hover:bg-red-600",
-    ghost: "border border-slate-300 text-slate-700 hover:bg-slate-50",
+    ghost: "border border-slate-300 text-slate-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700",
   };
 
   return (
