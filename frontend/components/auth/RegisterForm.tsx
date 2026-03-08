@@ -1,49 +1,23 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent, useMemo } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { registerUser } from "@/lib/api/auth";
 import { useAuth } from "@/context/AuthContext";
-import { User, Mail, Lock, Eye, EyeOff, CheckCircle, X, AlertCircle, CheckSquare } from "lucide-react";
-
-interface PasswordRequirement {
-  label: string;
-  test: (password: string) => boolean;
-}
-
-const passwordRequirements: PasswordRequirement[] = [
-  { label: "At least 8 characters", test: (p) => p.length >= 8 },
-  { label: "One uppercase letter", test: (p) => /[A-Z]/.test(p) },
-  { label: "One lowercase letter", test: (p) => /[a-z]/.test(p) },
-  { label: "One digit", test: (p) => /\d/.test(p) },
-  {
-    label: "One special character (@#$%^&+=!)",
-    test: (p) => /[@#$%^&+=!]/.test(p),
-  },
-];
+import { User, Mail, Lock, AlertCircle, Sparkles, ArrowRight, UserPlus } from "lucide-react";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
   const router = useRouter();
-
-  const passwordChecks = useMemo(() => {
-    return passwordRequirements.map((req) => ({
-      ...req,
-      met: req.test(password),
-    }));
-  }, [password]);
-
-  const allRequirementsMet = passwordChecks.every((check) => check.met);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -65,13 +39,18 @@ export default function RegisterForm() {
       return;
     }
 
-    if (!allRequirementsMet) {
-      setError("Password does not meet all requirements");
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
       return;
     }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
+      return;
+    }
+
+    if (!agreeToTerms) {
+      setError("Please agree to the Terms of Service and Privacy Policy");
       return;
     }
 
@@ -97,34 +76,43 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto mb-4">
-              <CheckSquare className="w-9 h-9 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold text-slate-800 font-heading mb-2">
-              Create Account
-            </h2>
-            <p className="text-slate-600">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
-              >
-                Sign in
-              </Link>
+    <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-6xl grid items-center gap-16 md:grid-cols-2">
+        {/* Left: hero copy */}
+        <section className="space-y-6 animate-slideInLeft">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/80 border border-emerald-200 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm shadow-emerald-100">
+            <Sparkles className="w-4 h-4" />
+            Join TaskBoard Today!
+          </div>
+          <div>
+            <h1 className="font-heading text-5xl md:text-5xl font-bold tracking-tight text-slate-900">
+              Start Your{" "}
+              <span className="text-emerald-600">Productivity Journey</span>
+            </h1>
+            <p className="mt-4 text-base md:text-lg text-slate-600 max-w-lg leading-relaxed">
+              Create your free account and unlock powerful tools to organize, prioritize, and accomplish your goals with ease.
             </p>
           </div>
+        </section>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+        {/* Right: form card */}
+        <section className="animate-slideInRight">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 px-8 py-10">
+            <div className="mb-8">
+              <h2 className="text-3xl font-heading font-bold text-slate-900">
+                Create Account
+              </h2>
+              <p className="mt-2 text-base text-slate-500">
+                Fill in your details to get started
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                  <User className="w-4 h-4 text-emerald-600" />
+                  Full Name
+                </label>
                 <input
                   type="text"
                   value={name}
@@ -133,19 +121,17 @@ export default function RegisterForm() {
                   }
                   placeholder="John Doe"
                   required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl 
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 
-                    transition-all outline-none text-slate-900"
+                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
+                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
+                    transition-all outline-none text-base text-slate-900"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                  <Mail className="w-4 h-4 text-emerald-600" />
+                  Email Address
+                </label>
                 <input
                   type="email"
                   value={email}
@@ -154,147 +140,134 @@ export default function RegisterForm() {
                   }
                   placeholder="you@example.com"
                   required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl 
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 
-                    transition-all outline-none text-slate-900"
+                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
+                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
+                    transition-all outline-none text-base text-slate-900"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                  <Lock className="w-4 h-4 text-emerald-600" />
+                  Password
+                </label>
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   value={password}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setPassword(e.target.value)
                   }
-                  placeholder="Create a password"
+                  placeholder="Minimum 6 characters"
                   required
-                  className="w-full pl-10 pr-12 py-3 border-2 border-slate-200 rounded-xl 
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 
-                    transition-all outline-none text-slate-900"
+                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
+                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
+                    transition-all outline-none text-base text-slate-900"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 
-                    hover:text-slate-600 transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
               </div>
-            </div>
 
-            {password && (
-              <div className="bg-emerald-50/50 rounded-xl p-4 space-y-2 border border-emerald-100">
-                <p className="text-xs font-semibold text-slate-700 mb-2">
-                  Password requirements:
-                </p>
-                {passwordChecks.map((check, index) => (
-                  <div key={index} className="flex items-center gap-2 text-xs">
-                    {check.met ? (
-                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                    ) : (
-                      <X className="w-4 h-4 text-slate-400 shrink-0" />
-                    )}
-                    <span
-                      className={
-                        check.met ? "text-emerald-700" : "text-slate-600"
-                      }
-                    >
-                      {check.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                  <Lock className="w-4 h-4 text-emerald-600" />
+                  Confirm Password
+                </label>
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
+                  type="password"
                   value={confirmPassword}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setConfirmPassword(e.target.value)
                   }
                   placeholder="Confirm your password"
                   required
-                  className="w-full pl-10 pr-12 py-3 border-2 border-slate-200 rounded-xl 
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 
-                    transition-all outline-none text-slate-900"
+                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
+                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
+                    transition-all outline-none text-base text-slate-900"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 
-                    hover:text-slate-600 transition-colors"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
               </div>
-            </div>
 
-            {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{error}</span>
+              <div className="pt-2">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={agreeToTerms}
+                    onChange={(e) => setAgreeToTerms(e.target.checked)}
+                    className="mt-1 w-4 h-4 rounded border-slate-300 text-emerald-600 
+                      focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
+                  />
+                  <span className="text-sm text-slate-600 leading-relaxed">
+                    I agree to the{" "}
+                    <Link href="/terms" className="font-medium text-emerald-600 hover:text-emerald-700">
+                      Terms of Service
+                    </Link>
+                    {" "}and{" "}
+                    <Link href="/privacy" className="font-medium text-emerald-600 hover:text-emerald-700">
+                      Privacy Policy
+                    </Link>
+                  </span>
+                </label>
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-linear-to-r from-emerald-500 to-teal-600 text-white 
-                rounded-xl py-3 font-semibold hover:from-emerald-600 hover:to-teal-700 
-                hover:shadow-lg hover:shadow-emerald-200/50 transform 
-                transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Creating account...
-                </span>
-              ) : (
-                "Create Account"
+              {error && (
+                <div className="flex items-center gap-2 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
               )}
-            </button>
-          </form>
-        </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-linear-to-r from-emerald-500 to-teal-600 text-white rounded-xl py-3.5 font-semibold text-base
+                  hover:from-emerald-600 hover:to-teal-700 hover:shadow-lg hover:shadow-emerald-200/60
+                  transform transition-all duration-200 
+                  disabled:opacity-60 disabled:cursor-not-allowed
+                  flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Creating account...
+                  </span>
+                ) : (
+                  <>
+                    Create Account
+                    <UserPlus className="w-5 h-5" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-slate-600 mb-2">
+                Already have an account?
+              </p>
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 text-base font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+              >
+                Sign in to your account
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

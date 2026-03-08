@@ -73,7 +73,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
               <CheckSquare className="w-6 h-6 text-white" />
             </div>
             <span
-              className={`font-heading text-xl font-bold text-slate-800 whitespace-nowrap
+              className={`font-heading text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap
                 transition-all duration-300 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}
             >
               TaskBoard

@@ -17,28 +17,33 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b border-slate-200 sticky top-0 z-10 px-6 py-3">
-      <div className="flex items-center justify-between">
+    <nav className="bg-white/90 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-10 px-4 md:px-6 py-3">
+      <div className="flex items-center justify-between gap-4">
         {/* Left: Logo */}
         <Link
           href="/dashboard"
-          className="text-xl font-bold text-indigo-600 hover:text-indigo-700"
+          className="flex items-center gap-2"
         >
-          TaskFlow
+          <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center shadow-sm shadow-emerald-200/80">
+            <span className="text-white text-sm font-semibold">TB</span>
+          </div>
+          <span className="font-heading text-lg font-bold text-slate-900 tracking-tight">
+            TaskBoard
+          </span>
         </Link>
 
         {/* Center: Nav Links */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-4 text-sm">
           <Link
             href="/dashboard"
-            className="text-slate-700 hover:text-indigo-600 font-medium transition-colors"
+            className="text-slate-700 hover:text-emerald-700 font-medium transition-colors"
           >
-            My Tasks
+            My tasks
           </Link>
           {user?.role === "ADMIN" && (
             <Link
               href="/admin"
-              className="text-slate-700 hover:text-indigo-600 font-medium transition-colors"
+              className="text-slate-700 hover:text-emerald-700 font-medium transition-colors"
             >
               Admin
             </Link>
@@ -46,8 +51,12 @@ export default function Navbar() {
         </div>
 
         {/* Right: User info + Logout */}
-        <div className="flex items-center gap-4">
-          <span className="text-slate-700 text-sm">{user?.name}</span>
+        <div className="flex items-center gap-3">
+          {user && (
+            <span className="hidden sm:inline text-slate-700 text-sm max-w-[140px] truncate">
+              {user.name}
+            </span>
+          )}
           <Button variant="ghost" onClick={handleLogout}>
             Logout
           </Button>

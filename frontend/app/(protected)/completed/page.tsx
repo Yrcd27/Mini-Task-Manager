@@ -65,8 +65,8 @@ export default function CompletedPage() {
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 font-heading">Completed Tasks</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <h1 className="text-2xl font-heading font-bold tracking-tight text-slate-900">Completed Tasks</h1>
+            <p className="text-sm text-slate-500 mt-1">
               {filtered.length} {filtered.length === 1 ? "task" : "tasks"} completed
             </p>
           </div>

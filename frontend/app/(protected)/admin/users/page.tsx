@@ -66,8 +66,8 @@ export default function AdminUsersPage() {
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 font-heading">User Management</h1>
-            <p className="text-sm text-slate-500 mt-0.5">{users.length} registered users</p>
+            <h1 className="text-2xl font-heading font-bold tracking-tight text-slate-900">User Management</h1>
+            <p className="text-sm text-slate-500 mt-1">{users.length} registered users</p>
           </div>
           <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
             <Users className="w-5 h-5 text-emerald-600" />
