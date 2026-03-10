@@ -135,8 +135,8 @@ export default function DashboardPage() {
           </div>
           <button
             onClick={() => openCreate()}
-            className="inline-flex items-center gap-2 bg-linear-to-r from-emerald-500 to-emerald-600
-              text-white px-5 py-2.5 rounded-xl font-semibold text-sm
+            className="inline-flex items-center justify-center gap-2 bg-linear-to-r from-emerald-500 to-emerald-600
+              text-white px-5 py-2.5 rounded-xl font-semibold text-sm w-full sm:w-auto
               hover:from-emerald-600 hover:to-emerald-700 hover:shadow-lg hover:shadow-emerald-200/50
               hover:scale-[1.02] transform transition-all duration-300 shrink-0"
           >
@@ -182,7 +182,7 @@ export default function DashboardPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1">
           {COLUMNS.map((col) => (
             <KanbanColumn
               key={col.status}

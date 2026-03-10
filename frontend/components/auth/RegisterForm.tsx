@@ -77,27 +77,27 @@ export default function RegisterForm() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-6xl grid items-center gap-16 md:grid-cols-2">
-        {/* Left: hero copy */}
-        <section className="space-y-6 animate-slideInLeft">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/80 border border-emerald-200 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm shadow-emerald-100">
+      <div className="w-full max-w-6xl grid items-center gap-12 md:gap-16 md:grid-cols-2">
+        {/* Left: hero copy — hidden on mobile */}
+        <section className="hidden md:flex flex-col space-y-6 animate-slideInLeft">
+          <div className="self-start inline-flex items-center gap-2 rounded-full bg-white/80 border border-emerald-200 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm shadow-emerald-100">
             <Sparkles className="w-4 h-4" />
             Join TaskBoard Today!
           </div>
           <div>
-            <h1 className="font-heading text-5xl md:text-5xl font-bold tracking-tight text-slate-900">
+            <h1 className="font-heading text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
               Start Your{" "}
               <span className="text-emerald-600">Productivity Journey</span>
             </h1>
-            <p className="mt-4 text-base md:text-lg text-slate-600 max-w-lg leading-relaxed">
+            <p className="mt-4 text-base lg:text-lg text-slate-600 max-w-lg leading-relaxed">
               Create your free account and unlock powerful tools to organize, prioritize, and accomplish your goals with ease.
             </p>
           </div>
         </section>
 
         {/* Right: form card */}
-        <section className="animate-slideInRight">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 px-8 py-10">
+        <section className="animate-slideInRight w-full">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 px-6 sm:px-8 py-8 sm:py-10">
             <div className="mb-8">
               <h2 className="text-3xl font-heading font-bold text-slate-900">
                 Create Account

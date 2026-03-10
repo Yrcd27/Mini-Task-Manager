@@ -66,19 +66,23 @@ export default function ProtectedLayout({
       {/* Main content */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Mobile top bar */}
-        <div className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white/90 backdrop-blur-sm border-b border-slate-100 shadow-sm sticky top-0 z-30">
-          <button
-            onClick={() => setIsMobileOpen(true)}
-            className="p-2 rounded-xl hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <span className="font-heading text-lg font-bold text-slate-900 tracking-tight">
-            TaskBoard
-          </span>
+        <div className="lg:hidden flex items-center justify-between gap-3 px-4 py-3 bg-white/90 backdrop-blur-sm border-b border-slate-100 shadow-sm sticky top-0 z-30">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileOpen(true)}
+              aria-label="Open navigation menu"
+              aria-expanded={isMobileOpen}
+              className="p-2.5 rounded-xl hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="font-heading text-lg font-bold text-slate-900 tracking-tight">
+              TaskBoard
+            </span>
+          </div>
         </div>
 
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
 
       {/* Mobile overlay — always rendered for smooth fade transition */}

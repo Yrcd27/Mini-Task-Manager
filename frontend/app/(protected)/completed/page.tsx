@@ -112,7 +112,8 @@ export default function CompletedPage() {
                 </div>
                 <button
                   onClick={() => setDeleteTarget(task)}
-                  className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-50 rounded-lg transition-all"
+                  aria-label="Delete task"
+                  className="opacity-100 md:opacity-0 md:group-hover:opacity-100 p-2 hover:bg-red-50 rounded-lg transition-all"
                 >
                   <Trash2 className="w-4 h-4 text-red-500" />
                 </button>

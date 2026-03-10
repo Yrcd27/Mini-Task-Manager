@@ -79,8 +79,8 @@ export default function ScheduledPage() {
           </div>
           <button
             onClick={openCreate}
-            className="inline-flex items-center gap-2 bg-linear-to-r from-emerald-500 to-emerald-600
-              text-white px-5 py-2.5 rounded-xl font-semibold text-sm
+            className="inline-flex items-center justify-center gap-2 bg-linear-to-r from-emerald-500 to-emerald-600
+              text-white px-5 py-2.5 rounded-xl font-semibold text-sm w-full sm:w-auto
               hover:from-emerald-600 hover:to-emerald-700 hover:shadow-lg hover:shadow-emerald-200/50
               hover:scale-[1.02] transform transition-all duration-300 shrink-0"
           >
@@ -120,16 +120,18 @@ export default function ScheduledPage() {
                   <h3 className="font-bold text-slate-800 text-sm leading-snug group-hover:text-emerald-700 transition-colors flex-1 line-clamp-2">
                     {task.title}
                   </h3>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                  <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
                     <button
                       onClick={() => openEdit(task)}
-                      className="p-1.5 hover:bg-emerald-50 rounded-lg transition-colors"
+                      aria-label="Edit task"
+                      className="p-2 hover:bg-emerald-50 rounded-lg transition-colors"
                     >
                       <Edit2 className="w-4 h-4 text-emerald-600" />
                     </button>
                     <button
                       onClick={() => setDeleteTarget(task)}
-                      className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                      aria-label="Delete task"
+                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </button>

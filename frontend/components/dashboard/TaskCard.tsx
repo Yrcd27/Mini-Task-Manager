@@ -89,8 +89,8 @@ export default function TaskCard({
               e.stopPropagation();
               onEdit();
             }}
-            className="hidden md:block opacity-0 group-hover:opacity-100 p-1.5 hover:bg-emerald-50 rounded-lg transition-all duration-200"
-            title="Edit task"
+            className="hidden md:block opacity-0 group-hover:opacity-100 p-2 hover:bg-emerald-50 rounded-lg transition-all duration-200"
+            aria-label="Edit task"
           >
             <Edit2 className="w-4 h-4 text-emerald-600" />
           </button>
@@ -99,8 +99,8 @@ export default function TaskCard({
               e.stopPropagation();
               onDelete();
             }}
-            className="hidden md:block opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-50 rounded-lg transition-all duration-200"
-            title="Delete task"
+            className="hidden md:block opacity-0 group-hover:opacity-100 p-2 hover:bg-red-50 rounded-lg transition-all duration-200"
+            aria-label="Delete task"
           >
             <Trash2 className="w-4 h-4 text-red-500" />
           </button>
@@ -113,8 +113,9 @@ export default function TaskCard({
                 setShowMenu(!showMenu);
                 setShowMoveSubmenu(false);
               }}
-              className="p-1.5 hover:bg-slate-100 rounded-lg transition-all"
-              title="More options"
+              className="p-2.5 hover:bg-slate-100 rounded-lg transition-all"
+              aria-label="Task options"
+              aria-expanded={showMenu}
             >
               <MoreVertical className="w-5 h-5 text-slate-500" />
             </button>

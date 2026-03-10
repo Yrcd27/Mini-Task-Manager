@@ -113,13 +113,13 @@ export default function TaskModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-slideInRight">
+      <div role="dialog" aria-modal="true" aria-labelledby="task-modal-title" className="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-slideInRight">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between z-10">
-          <h2 className="text-xl font-bold text-slate-800 font-heading">
+        <div className="sticky top-0 bg-white border-b border-slate-100 px-4 sm:px-6 py-4 flex items-center justify-between z-10">
+          <h2 id="task-modal-title" className="text-xl font-bold text-slate-800 font-heading">
             {mode === "create" ? "Add New Task" : "Edit Task"}
           </h2>
           <button
@@ -132,7 +132,7 @@ export default function TaskModal({
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto">
+          <div className="px-4 sm:px-6 py-4 sm:py-5 space-y-4 max-h-[70vh] sm:max-h-[65vh] overflow-y-auto">
             {/* Title */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1.5">
@@ -204,7 +204,7 @@ export default function TaskModal({
           </div>
 
           {/* Footer */}
-          <div className="sticky bottom-0 bg-white border-t border-slate-100 px-6 py-4 flex items-center justify-end gap-3">
+          <div className="sticky bottom-0 bg-white border-t border-slate-100 px-4 sm:px-6 py-4 flex items-center justify-end gap-3 pb-safe">
             <button
               type="button"
               onClick={onClose}

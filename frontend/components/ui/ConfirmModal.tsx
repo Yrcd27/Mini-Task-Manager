@@ -35,7 +35,7 @@ export default function ConfirmModal({
   if (typeof window === "undefined") return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-99999 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-99999 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
@@ -52,7 +52,7 @@ export default function ConfirmModal({
           <Icon className={`w-6 h-6 ${iconColor}`} />
         </div>
 
-        <h3 className="text-lg font-bold text-slate-800 mb-2 font-heading">{title}</h3>
+        <h3 id="confirm-modal-title" className="text-lg font-bold text-slate-800 mb-2 font-heading">{title}</h3>
         <p className="text-sm text-slate-500 mb-6 leading-relaxed">{message}</p>
 
         <div className="flex gap-3">

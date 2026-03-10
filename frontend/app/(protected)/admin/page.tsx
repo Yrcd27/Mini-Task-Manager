@@ -110,7 +110,7 @@ export default function AdminPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {[
           { label: "Total Tasks", value: stats.total,      icon: ListTodo,      bg: "bg-emerald-50",  border: "border-emerald-100", iconColor: "text-emerald-600" },
           { label: "To Do",       value: stats.todo,       icon: Clock,         bg: "bg-slate-50",    border: "border-slate-200",   iconColor: "text-slate-500"   },

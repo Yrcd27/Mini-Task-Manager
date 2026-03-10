@@ -59,6 +59,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
       />
 
       <aside
+        aria-label="Main navigation"
         className={`flex flex-col h-full bg-white/90 backdrop-blur-md border border-emerald-100
           shadow-lg rounded-3xl transition-all duration-300 ease-in-out overflow-hidden
           ${isMobile ? "w-64" : "w-full"}`}
@@ -83,7 +84,8 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
           {!isMobile && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-1.5 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-700
+              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              className="p-2 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-700
                 transition-all duration-200 shrink-0"
             >
               <ChevronLeft
@@ -94,7 +96,8 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
           {isMobile && (
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+              aria-label="Close navigation menu"
+              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
