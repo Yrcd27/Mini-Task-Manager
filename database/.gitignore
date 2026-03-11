@@ -1,1 +1,9 @@
-populate_database_clean.sql
+# Database backups and dumps
+*.sql.backup
+*.sql.gz
+*.dump
+*_backup.sql
+
+# Database connection files (if any)
+.env
+.env.local

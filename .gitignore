@@ -1,0 +1,25 @@
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Project-specific
+.project-notes.md
