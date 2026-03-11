@@ -1,6 +1,6 @@
 <div align="center">
 
-# Mini Task Management System
+# TaskBoard - The Task Manager
 
 A full-stack task management application with JWT authentication, role-based access control, and comprehensive task management features.
 
