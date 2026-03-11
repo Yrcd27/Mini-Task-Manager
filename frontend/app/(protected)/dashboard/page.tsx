@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getTasks, createTask, updateTask, deleteTask } from "@/lib/api/tasks";
 import { TaskResponse, TaskPriority, TaskStatus } from "@/types";
-import { toast } from "react-toastify";
+import { useToast } from "@/context/ToastContext";
 import { Plus, Search } from "lucide-react";
 import KanbanColumn from "@/components/dashboard/KanbanColumn";
 import TaskModal from "@/components/dashboard/TaskModal";
@@ -41,11 +41,9 @@ export default function DashboardPage() {
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "">("");
   const [sortBy, setSortBy] = useState<"createdAt" | "dueDate" | "priority">("createdAt");
 
-  // Delete confirm modal
   const [deleteTarget, setDeleteTarget] = useState<TaskResponse | null>(null);
-
-  // Drag
   const draggedTask = useRef<TaskResponse | null>(null);
+  const { addToast } = useToast();
 
   const fetchTasks = async () => {
     setIsLoading(true);
@@ -53,7 +51,7 @@ export default function DashboardPage() {
       const res = await getTasks({ page: 0, size: 200, sortBy, sortDir: "DESC" });
       setTasks(res.content);
     } catch {
-      toast.error("Failed to load tasks");
+      addToast("Failed to load tasks", 'error');
       setTasks([]);
     } finally {
       setIsLoading(false);
@@ -80,10 +78,10 @@ export default function DashboardPage() {
   const handleSubmit = async (data: { title: string; description: string; dueDate: string; priority: TaskPriority; status: TaskStatus }) => {
     if (modalMode === "create") {
       await createTask(data);
-      toast.success("Task created!");
+      addToast("Task created!", 'success');
     } else if (editingTask) {
       await updateTask(editingTask.id, data);
-      toast.success("Task updated!");
+      addToast("Task updated!", 'success');
     }
     fetchTasks();
   };
@@ -92,10 +90,10 @@ export default function DashboardPage() {
     if (!deleteTarget) return;
     try {
       await deleteTask(deleteTarget.id);
-      toast.success("Task deleted!");
+      addToast("Task deleted!", 'success');
       fetchTasks();
     } catch {
-      toast.error("Failed to delete task");
+      addToast("Failed to delete task", 'error');
     } finally {
       setDeleteTarget(null);
     }
@@ -113,7 +111,7 @@ export default function DashboardPage() {
         status: newStatus,
       });
     } catch {
-      toast.error("Failed to move task");
+      addToast("Failed to move task", 'error');
       fetchTasks();
     }
   };

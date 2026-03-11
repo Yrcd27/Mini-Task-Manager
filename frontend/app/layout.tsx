@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Inter, Plus_Jakarta_Sans } from "next/font/google";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import PageTransition from "@/components/layout/PageTransition";
+import { ToastProvider } from "@/context/ToastContext";
+import ToastContainer from "@/components/ui/ToastContainer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,21 +51,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${plusJakarta.variable} antialiased`}
       >
-        <AuthProvider>
-          <PageTransition>{children}</PageTransition>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <PageTransition>{children}</PageTransition>
+            <ToastContainer />
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

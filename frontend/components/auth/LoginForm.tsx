@@ -3,7 +3,7 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { useToast } from "@/context/ToastContext";
 import { loginUser } from "@/lib/api/auth";
 import { useAuth } from "@/context/AuthContext";
 import { Mail, Lock, AlertCircle, PartyPopper, ArrowRight } from "lucide-react";
@@ -16,6 +16,7 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const { login } = useAuth();
   const router = useRouter();
+  const { addToast } = useToast();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ export default function LoginForm() {
     try {
       const response = await loginUser({ email, password });
       login(response);
-      toast.success(`Welcome back, ${response.name}!`);
+      addToast(`Welcome back, ${response.name}!`, 'success');
       router.push("/dashboard");
     } catch (error: unknown) {
       let errorMessage = "Login failed. Please check your credentials.";

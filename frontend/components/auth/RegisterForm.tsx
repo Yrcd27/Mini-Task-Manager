@@ -3,7 +3,7 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { useToast } from "@/context/ToastContext";
 import { registerUser } from "@/lib/api/auth";
 import { useAuth } from "@/context/AuthContext";
 import { User, Mail, Lock, AlertCircle, Sparkles, ArrowRight, UserPlus } from "lucide-react";
@@ -18,6 +18,7 @@ export default function RegisterForm() {
   const [error, setError] = useState("");
   const { login } = useAuth();
   const router = useRouter();
+  const { addToast } = useToast();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -59,7 +60,7 @@ export default function RegisterForm() {
     try {
       const response = await registerUser({ name, email, password });
       login(response);
-      toast.success("Account created successfully!");
+      addToast("Account created successfully!", 'success');
       router.push("/dashboard");
     } catch (error: unknown) {
       let errorMessage = "Registration failed. Please try again.";
