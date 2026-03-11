@@ -66,38 +66,49 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
       >
         {/* Header */}
         <div
-          className={`flex items-center border-b border-slate-100 transition-all duration-300
+          className={`flex items-center border-b border-slate-100 transition-all duration-300 ease-in-out
             ${collapsed ? "justify-center py-5 px-3" : "justify-between p-5"}`}
         >
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0">
-              <CheckSquare className="w-6 h-6 text-white" />
-            </div>
-            <span
-              className={`font-heading text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap
-                transition-all duration-300 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}
-            >
-              TaskBoard
-            </span>
-          </div>
-
-          {!isMobile && (
+          {/* Logo and Title Container */}
+          {collapsed && !isMobile ? (
             <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-              className="p-2 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-700
-                transition-all duration-200 shrink-0"
+              onClick={() => setIsCollapsed(false)}
+              aria-label="Expand sidebar"
+              title="Expand sidebar"
+              className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0
+                hover:bg-emerald-600 hover:shadow-lg transition-all duration-200"
             >
-              <ChevronLeft
-                className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
-              />
+              <CheckSquare className="w-6 h-6 text-white" />
+            </button>
+          ) : (
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0">
+                <CheckSquare className="w-6 h-6 text-white" />
+              </div>
+              <span className="font-heading text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap truncate">
+                TaskBoard
+              </span>
+            </div>
+          )}
+
+          {/* Toggle/Close Button */}
+          {!isMobile && !collapsed && (
+            <button
+              onClick={() => setIsCollapsed(true)}
+              aria-label="Collapse sidebar"
+              title="Collapse sidebar"
+              className="p-2 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-700
+                transition-colors duration-200 shrink-0 ml-2"
+            >
+              <ChevronLeft className="w-5 h-5" />
             </button>
           )}
           {isMobile && (
             <button
               onClick={onClose}
               aria-label="Close navigation menu"
-              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+              title="Close menu"
+              className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors shrink-0 ml-2"
             >
               <X className="w-5 h-5" />
             </button>
@@ -106,7 +117,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
 
         {/* Navigation */}
         <nav
-          className={`flex-1 space-y-1 py-4 transition-all duration-300
+          className={`flex-1 space-y-1 py-4 transition-all duration-300 ease-in-out
             ${collapsed ? "px-3" : "px-4"}`}
         >
           {filtered.map((item) => {
@@ -117,7 +128,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
                 key={item.id}
                 href={item.href}
                 onClick={() => isMobile && onClose()}
-                className={`flex items-center rounded-xl text-sm font-medium transition-all duration-200
+                className={`flex items-center rounded-xl text-sm font-medium transition-all duration-200 ease-in-out
                   ${collapsed ? "justify-center px-3 py-3" : "gap-3 px-4 py-3"}
                   ${isActive
                     ? "bg-emerald-100 text-emerald-700 font-semibold"
@@ -125,7 +136,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
               >
                 <Icon className="w-5 h-5 shrink-0" />
                 <span
-                  className={`whitespace-nowrap transition-all duration-300
+                  className={`whitespace-nowrap transition-all duration-300 ease-in-out
                     ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}
                 >
                   {item.label}
@@ -137,12 +148,12 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
 
         {/* User + Logout */}
         <div
-          className={`border-t border-slate-100 py-4 space-y-3 transition-all duration-300 mt-auto
+          className={`border-t border-slate-100 py-4 space-y-3 transition-all duration-300 ease-in-out mt-auto
             ${collapsed ? "px-3" : "px-4"}`}
         >
           {user && (
             <div
-              className={`flex items-center p-3 bg-emerald-50 rounded-xl transition-all duration-300
+              className={`flex items-center p-3 bg-emerald-50 rounded-xl transition-all duration-300 ease-in-out
                 ${collapsed ? "justify-center" : "gap-3"}`}
             >
               <UserCircle className="w-8 h-8 text-emerald-500 shrink-0" />
@@ -161,7 +172,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobile, onClose
               bg-linear-to-r from-emerald-500 to-emerald-600
               hover:from-emerald-600 hover:to-emerald-700
               shadow-md hover:shadow-lg hover:shadow-emerald-200/50
-              transition-all duration-300
+              transition-all duration-300 ease-in-out
               ${collapsed ? "justify-center px-3 py-3" : "justify-center gap-2 px-4 py-3"}`}
           >
             <LogOut className="w-5 h-5 shrink-0" />

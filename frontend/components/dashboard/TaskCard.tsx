@@ -27,12 +27,6 @@ const priorityColors: Record<TaskPriority, string> = {
   HIGH: "bg-red-100 text-red-700 border-red-200",
 };
 
-const priorityIcons: Record<TaskPriority, string> = {
-  LOW: "🟢",
-  MEDIUM: "🟡",
-  HIGH: "🔴",
-};
-
 const ALL_STATUSES: { value: TaskStatus; label: string }[] = [
   { value: "TODO", label: "To Do" },
   { value: "IN_PROGRESS", label: "In Progress" },
@@ -80,9 +74,6 @@ export default function TaskCard({
         </h3>
 
         <div className="flex items-center gap-1 shrink-0">
-          {/* Priority emoji */}
-          <span className="text-base">{priorityIcons[task.priority]}</span>
-
           {/* Desktop: hover-reveal edit & delete */}
           <button
             onClick={(e) => {

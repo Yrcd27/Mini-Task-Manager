@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/layout/Sidebar";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { Menu } from "lucide-react";
+import { Menu, CheckSquare } from "lucide-react";
 
 interface JwtPayload {
   exp: number;
@@ -52,7 +52,7 @@ export default function ProtectedLayout({
       {/* Desktop sidebar — sticky in normal flow, adjusts width on collapse */}
       <div
         className={`hidden lg:flex sticky top-0 h-screen shrink-0 p-4 transition-all duration-300 ease-in-out ${
-          isCollapsed ? "w-22" : "w-72"
+          isCollapsed ? "w-24" : "w-72"
         }`}
       >
         <Sidebar
@@ -76,9 +76,14 @@ export default function ProtectedLayout({
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="font-heading text-lg font-bold text-slate-900 tracking-tight">
-              TaskBoard
-            </span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
+                <CheckSquare className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-heading text-lg font-bold text-slate-900 tracking-tight">
+                TaskBoard
+              </span>
+            </div>
           </div>
         </div>
 
