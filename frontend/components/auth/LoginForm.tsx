@@ -14,6 +14,7 @@ export default function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const { login } = useAuth();
   const router = useRouter();
   const { addToast } = useToast();
@@ -21,6 +22,7 @@ export default function LoginForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
+    setValidationErrors({});
 
     if (!email || !password) {
       setError("Please fill in all fields");
@@ -36,12 +38,30 @@ export default function LoginForm() {
       router.push("/dashboard");
     } catch (error: unknown) {
       let errorMessage = "Login failed. Please check your credentials.";
+      
       if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as {
-          response?: { data?: { message?: string } };
+          response?: { 
+            data?: { 
+              message?: string;
+              errors?: Record<string, string>;
+              validationErrors?: Record<string, string>;
+            } 
+          };
         };
-        errorMessage = axiosError.response?.data?.message || errorMessage;
+        
+        const responseData = axiosError.response?.data;
+        
+        // Handle validation errors from backend
+        if (responseData?.validationErrors || responseData?.errors) {
+          const backendErrors = responseData.validationErrors || responseData.errors || {};
+          setValidationErrors(backendErrors);
+          errorMessage = "Please fix the errors below";
+        } else if (responseData?.message) {
+          errorMessage = responseData.message;
+        }
       }
+      
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -94,10 +114,20 @@ export default function LoginForm() {
                   }
                   placeholder="john.smith@example.com"
                   required
-                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
-                    transition-all outline-none text-base text-slate-900"
+                  className={`w-full px-4 py-3.5 border rounded-xl bg-slate-50
+                    focus:ring-2 focus:bg-white
+                    transition-all outline-none text-base text-slate-900 ${
+                      validationErrors.email 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
+                        : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20'
+                    }`}
                 />
+                {validationErrors.email && (
+                  <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {validationErrors.email}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -113,10 +143,20 @@ export default function LoginForm() {
                   }
                   placeholder="••••••••••"
                   required
-                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
-                    transition-all outline-none text-base text-slate-900"
+                  className={`w-full px-4 py-3.5 border rounded-xl bg-slate-50
+                    focus:ring-2 focus:bg-white
+                    transition-all outline-none text-base text-slate-900 ${
+                      validationErrors.password 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
+                        : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20'
+                    }`}
                 />
+                {validationErrors.password && (
+                  <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {validationErrors.password}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center justify-between">

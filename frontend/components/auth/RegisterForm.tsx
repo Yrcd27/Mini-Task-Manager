@@ -13,9 +13,10 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [showPasswordHint, setShowPasswordHint] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
   const { addToast } = useToast();
@@ -23,9 +24,16 @@ export default function RegisterForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
+    setValidationErrors({});
 
+    // Client-side validation
     if (!name.trim()) {
       setError("Please enter your name");
+      return;
+    }
+
+    if (name.trim().length < 2) {
+      setError("Name must be at least 2 characters");
       return;
     }
 
@@ -40,18 +48,24 @@ export default function RegisterForm() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+
+    // Password strength validation
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[@#$%^&+=!]/.test(password);
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+      setError("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@#$%^&+=!)");
       return;
     }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
-      return;
-    }
-
-    if (!agreeToTerms) {
-      setError("Please agree to the Terms of Service and Privacy Policy");
       return;
     }
 
@@ -64,12 +78,30 @@ export default function RegisterForm() {
       router.push("/dashboard");
     } catch (error: unknown) {
       let errorMessage = "Registration failed. Please try again.";
+      
       if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as {
-          response?: { data?: { message?: string } };
+          response?: { 
+            data?: { 
+              message?: string;
+              errors?: Record<string, string>;
+              validationErrors?: Record<string, string>;
+            } 
+          };
         };
-        errorMessage = axiosError.response?.data?.message || errorMessage;
+        
+        const responseData = axiosError.response?.data;
+        
+        // Handle validation errors from backend
+        if (responseData?.validationErrors || responseData?.errors) {
+          const backendErrors = responseData.validationErrors || responseData.errors || {};
+          setValidationErrors(backendErrors);
+          errorMessage = "Please fix the validation errors below";
+        } else if (responseData?.message) {
+          errorMessage = responseData.message;
+        }
       }
+      
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -122,10 +154,20 @@ export default function RegisterForm() {
                   }
                   placeholder="John Doe"
                   required
-                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
-                    transition-all outline-none text-base text-slate-900"
+                  className={`w-full px-4 py-3.5 border rounded-xl bg-slate-50
+                    focus:ring-2 focus:bg-white
+                    transition-all outline-none text-base text-slate-900 ${
+                      validationErrors.name 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
+                        : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20'
+                    }`}
                 />
+                {validationErrors.name && (
+                  <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {validationErrors.name}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -141,10 +183,20 @@ export default function RegisterForm() {
                   }
                   placeholder="you@example.com"
                   required
-                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
-                    transition-all outline-none text-base text-slate-900"
+                  className={`w-full px-4 py-3.5 border rounded-xl bg-slate-50
+                    focus:ring-2 focus:bg-white
+                    transition-all outline-none text-base text-slate-900 ${
+                      validationErrors.email 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
+                        : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20'
+                    }`}
                 />
+                {validationErrors.email && (
+                  <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {validationErrors.email}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -155,15 +207,34 @@ export default function RegisterForm() {
                 <input
                   type="password"
                   value={password}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setPassword(e.target.value)
-                  }
-                  placeholder="Minimum 6 characters"
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    setPassword(e.target.value);
+                    if (!showPasswordHint && e.target.value.length > 0) {
+                      setShowPasswordHint(true);
+                    }
+                  }}
+                  onFocus={() => setShowPasswordHint(true)}
+                  placeholder="Create a strong password"
                   required
-                  className="w-full px-4 py-3.5 border border-slate-200 rounded-xl bg-slate-50
-                    focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
-                    transition-all outline-none text-base text-slate-900"
+                  className={`w-full px-4 py-3.5 border rounded-xl bg-slate-50
+                    focus:ring-2 focus:bg-white
+                    transition-all outline-none text-base text-slate-900 ${
+                      validationErrors.password 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' 
+                        : 'border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20'
+                    }`}
                 />
+                {showPasswordHint && password.length > 0 && (
+                  <p className="mt-2 text-xs text-slate-600">
+                    Password must contain: At least 8 characters, One uppercase letter (A-Z), One lowercase letter (a-z), One number (0-9), One special character (@#$%^&+=!)
+                  </p>
+                )}
+                {validationErrors.password && (
+                  <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {validationErrors.password}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -183,28 +254,6 @@ export default function RegisterForm() {
                     focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white
                     transition-all outline-none text-base text-slate-900"
                 />
-              </div>
-
-              <div className="pt-2">
-                <label className="flex items-start gap-3 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={agreeToTerms}
-                    onChange={(e) => setAgreeToTerms(e.target.checked)}
-                    className="mt-1 w-4 h-4 rounded border-slate-300 text-emerald-600 
-                      focus:ring-2 focus:ring-emerald-500/20 cursor-pointer"
-                  />
-                  <span className="text-sm text-slate-600 leading-relaxed">
-                    I agree to the{" "}
-                    <Link href="/terms" className="font-medium text-emerald-600 hover:text-emerald-700">
-                      Terms of Service
-                    </Link>
-                    {" "}and{" "}
-                    <Link href="/privacy" className="font-medium text-emerald-600 hover:text-emerald-700">
-                      Privacy Policy
-                    </Link>
-                  </span>
-                </label>
               </div>
 
               {error && (
