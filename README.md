@@ -290,7 +290,11 @@ The project includes a comprehensive Postman collection for API testing.
 4. Update the `baseUrl` and `token` variables as needed
 5. Execute requests to test all endpoints
 
-For detailed API documentation, refer to the Postman collection which includes:
+For detailed API documentation, refer to the published Postman documentation:
+
+**[View API Documentation](https://documenter.getpostman.com/view/45183777/2sBXigLCr6)**
+
+The documentation includes:
 - Authentication endpoints (register, login)
 - Task CRUD operations
 - Filtering and pagination
