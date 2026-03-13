@@ -128,38 +128,6 @@ This script will:
 
 **Database Configuration Details:** See [database/setup_database.sql](database/setup_database.sql) for complete schema.
 
-**Step 3: Creating Admin Users**
-
-By default, all users registered through the application are assigned the USER role. To grant administrative privileges, you must manually update the user's role in the database using SQL queries.
-
-**To promote an existing user to admin:**
-
-```sql
--- Login to MySQL
-mysql -u root -p
-
--- Select the database
-USE task_management;
-
--- Update user role to ADMIN (replace with actual email)
-UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
-
--- Verify the change
-SELECT id, email, role FROM users WHERE email = 'admin@example.com';
-```
-
-**Security Significance:**
-
-This deliberate manual approach to admin role assignment provides several security benefits:
-
-- **Prevents Privilege Escalation:** Users cannot self-promote to admin through the application interface, preventing unauthorized privilege escalation attacks
-- **Audit Trail:** Database-level changes can be logged and monitored through MySQL audit logs
-- **Separation of Concerns:** Administrative access is controlled at the database level, separate from application logic
-- **Reduces Attack Surface:** No API endpoint exists for role modification, eliminating a potential security vulnerability
-- **Intentional Access Control:** Requires deliberate action and database access, ensuring only authorized personnel with database credentials can grant admin privileges
-
-This approach follows the principle of least privilege and ensures that administrative access is granted only through secure, controlled channels.
-
 ### 3. Backend Setup
 
 **Step 1:** Navigate to backend directory
@@ -169,7 +137,7 @@ cd backend
 
 **Step 2:** Configure environment variables
 
-Create a `.env` file in the `backend` directory (or set environment variables):
+Create a `.env` file in the `backend` directory:
 
 ```env
 DATABASE_URL=jdbc:mysql://localhost:3306/task_management
@@ -183,6 +151,24 @@ JWT_SECRET=your_secret_key_minimum_32_characters
 - `DATABASE_USERNAME` - MySQL username
 - `DATABASE_PASSWORD` - MySQL password
 - `JWT_SECRET` - Secret key for JWT token generation (minimum 32 characters)
+
+**Alternative (without `.env` file):** Set environment variables directly in your terminal session.
+
+**Windows PowerShell:**
+```powershell
+$env:DATABASE_URL="jdbc:mysql://localhost:3306/task_management"
+$env:DATABASE_USERNAME="root"
+$env:DATABASE_PASSWORD="your_mysql_password"
+$env:JWT_SECRET="your_secret_key_minimum_32_characters"
+```
+
+**Linux/Mac:**
+```bash
+export DATABASE_URL="jdbc:mysql://localhost:3306/task_management"
+export DATABASE_USERNAME="root"
+export DATABASE_PASSWORD="your_mysql_password"
+export JWT_SECRET="your_secret_key_minimum_32_characters"
+```
 
 **Step 3:** Build and run the application
 
@@ -204,7 +190,11 @@ The backend server will start at `http://localhost:8080`
 
 **Step 1:** Navigate to frontend directory
 ```bash
-cd frontend
+# If you are currently in backend/
+cd ../frontend
+
+# Or, from project root
+# cd frontend
 ```
 
 **Step 2:** Install dependencies
@@ -212,12 +202,14 @@ cd frontend
 npm install
 ```
 
-**Step 3:** Configure environment (optional)
+**Step 3:** Configure frontend environment variables
 
-Create `.env.local` if you need to customize the API URL:
+Create a `.env.local` file in the `frontend` directory:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080/api
 ```
+
+If you do not set `NEXT_PUBLIC_API_URL`, frontend API requests may fail because `baseURL` is read from this variable.
 
 **Step 4:** Start development server
 ```bash
@@ -226,7 +218,31 @@ npm run dev
 
 The frontend application will start at `http://localhost:3000`
 
-### 5. Build for Production
+### 5. Create Admin User (Backend/Database)
+
+By default, all users registered through the application are assigned the `USER` role.
+To grant administrative privileges, promote a user manually in MySQL.
+
+**Recommended order:**
+1. Start backend and frontend
+2. Register a normal user account via the app
+3. Run the SQL update below to promote that user to `ADMIN`
+
+```sql
+-- Login to MySQL
+mysql -u root -p
+
+-- Select the database
+USE task_management;
+
+-- Update user role to ADMIN (replace with an existing email)
+UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
+
+-- Verify the change
+SELECT id, email, role FROM users WHERE email = 'admin@example.com';
+```
+
+### 6. Build for Production
 
 **Backend:**
 ```bash
@@ -237,7 +253,11 @@ java -jar target/task-manager-backend-0.0.1-SNAPSHOT.jar
 
 **Frontend:**
 ```bash
-cd frontend
+# If you are currently in backend/
+cd ../frontend
+
+# Or, from project root
+# cd frontend
 npm run build
 npm start
 ```
